@@ -1,0 +1,64 @@
+name: Docker Build and Push
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push API Gateway
+        uses: docker/build-push-action@v2
+        with:
+          context: ./api-gateway
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/cafe-api-gateway:latest
+
+      - name: Build and push Menu Service
+        uses: docker/build-push-action@v2
+        with:
+          context: ./menu-services
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/cafe-menu-service:latest
+
+      - name: Build and push Order Service
+        uses: docker/build-push-action@v2
+        with:
+          context: ./order-services
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/cafe-order-service:latest
+
+      - name: Build and push Payment Service
+        uses: docker/build-push-action@v2
+        with:
+          context: ./payment-services
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/cafe-payment-service:latest
+
+      - name: Build and push Inventory Service
+        uses: docker/build-push-action@v2
+        with:
+          context: ./inventory-services
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/cafe-inventory-service:latest
+
+      - name: Build and push Customer Service
+        uses: docker/build-push-action@v2
+        with:
+          context: ./customer-services
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/cafe-customer-service:latest
